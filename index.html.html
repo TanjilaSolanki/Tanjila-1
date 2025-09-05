@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Teacher's Day - CS Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d1b69 100%);
+            color: #00ff88;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ff88, #00ccff, #ff6b6b, #ffd93d);
+            background-size: 300% 300%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+            margin-bottom: 1rem;
+        }
+        
+        .subtitle {
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            color: #00ccff;
+            text-shadow: 0 0 20px rgba(0, 204, 255, 0.7);
+            margin-bottom: 2rem;
+        }
+        
+        .code-block {
+            background: rgba(15, 15, 35, 0.9);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            animation: shimmer 3s linear infinite;
+        }
+        
+        .code-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .code-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 0.5rem;
+        }
+        
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .dot.red { background: #ff5f57; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #28ca42; }
+        
+        .language-tag {
+            background: #00ff88;
+            color: #0f0f23;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: auto;
+        }
+        
+        .code-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            line-height: 1.6;
+            color: #00ff88;
+        }
+        
+        .keyword { color: #ff6b6b; }
+        .string { color: #ffd93d; }
+        .comment { color: #888; font-style: italic; }
+        .function { color: #00ccff; }
+        .variable { color: #ff9ff3; }
+        
+        .message-section {
+            background: rgba(0, 204, 255, 0.1);
+            border: 2px solid #00ccff;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 3rem 0;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .message-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: sweep 4s infinite;
+        }
+        
+        .message-text {
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .highlight {
+            color: #ffd93d;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(255, 217, 61, 0.7);
+        }
+        
+        .binary-heart {
+            font-size: 2rem;
+            color: #ff6b6b;
+            animation: heartbeat 1.5s infinite;
+            margin: 1rem 0;
+        }
+        
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .floating-symbol {
+            position: absolute;
+            color: rgba(0, 255, 136, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            animation: float 10s infinite linear;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        
+        .tech-card {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tech-card:hover {
+            transform: translateY(-10px) rotateY(5deg);
+            box-shadow: 0 20px 40px rgba(255, 107, 107, 0.3);
+            border-color: #ffd93d;
+        }
+        
+        .tech-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 217, 61, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .tech-card:hover::before {
+            left: 100%;
+        }
+        
+        .tech-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .tech-name {
+            font-weight: bold;
+            color: #ffffff;
+            position: relative;
+            z-index: 2;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translate(-100%, -100%) rotate(45deg); }
+            100% { transform: translate(100%, 100%) rotate(45deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.9); }
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes sweep {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .code-block, .message-section { padding: 1.5rem; }
+            .tech-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <canvas class="matrix-rain"></canvas>
+    
+    <div class="floating-elements">
+        <div class="floating-symbol" style="left: 10%; animation-delay: 0s;">{}</div>
+        <div class="floating-symbol" style="left: 20%; animation-delay: 2s;">[]</div>
+        <div class="floating-symbol" style="left: 30%; animation-delay: 4s;"><></div>
+        <div class="floating-symbol" style="left: 40%; animation-delay: 6s;">()</div>
+        <div class="floating-symbol" style="left: 50%; animation-delay: 8s;">&&</div>
+        <div class="floating-symbol" style="left: 60%; animation-delay: 1s;">||</div>
+        <div class="floating-symbol" style="left: 70%; animation-delay: 3s;">!</div>
+        <div class="floating-symbol" style="left: 80%; animation-delay: 5s;">?</div>
+        <div class="floating-symbol" style="left: 90%; animation-delay: 7s;">;</div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="title">TEACHER'S DAY</h1>
+            <p class="subtitle">// Compiling Gratitude for <span class="highlight">JIGYASA MA'AM</span>💖🙂💖</p>
+
+        </div>
+        
+        <div class="code-block">
+            <div class="code-header">
+                <div class="dots">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <div class="language-tag">Python</div>
+            </div>
+            <div class="code-content">
+                <pre class="code-text"><span class="keyword">class</span> <span class="function">Teacher</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):
+        <span class="variable">self</span>.patience = <span class="string">"infinite"</span>
+        <span class="variable">self</span>.knowledge = <span class="string">"boundless"</span>
+        <span class="variable">self</span>.impact = <span class="string">"immeasurable"</span>
+    
+    <span class="keyword">def</span> <span class="function">inspire</span>(<span class="variable">self</span>, student):
+        <span class="keyword">while</span> student.curiosity > <span class="string">0</span>:
+            student.learning += <span class="variable">self</span>.guidance()
+            student.confidence.boost()
+        <span class="keyword">return</span> <span class="string">"Future Developer Created ✨"</span>
+
+<span class="comment"># Every line of code I wrote today</span>
+<span class="comment"># Started with a teacher who believed in me</span>
+my_teacher = <span class="function">Teacher</span>()
+<span class="function">print</span>(<span class="string">"Thank you for teaching me!"</span>)</pre>
+            </div>
+        </div>
+        
+        <div class="message-section">
+            <div class="message-text">
+                To the <span class="highlight">teacher who never gives up</span>,<br>
+                the <span class="highlight">beautiful and cheerful</span>,<br>
+                and the <span class="highlight">hard-working person</span>
+            </div>
+            <div class="binary-heart">♥</div>
+            <div class="message-text">
+                You are enough,<br>
+                you are <span class="highlight">creative</span>
+            </div>
+        </div>
+        
+        <div class="code-block">
+            <div class="code-header">
+                <div class="dots">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <div class="language-tag">JavaScript</div>
+            </div>
+            <div class="code-content">
+                <pre class="code-text"><span class="keyword">const</span> gratitude = {
+    <span class="variable">from</span>: <span class="string">"Tanjeela"</span>,
+    <span class="variable">to</span>: <span class="string">"Amazing CS Teacher"</span>,
+    <span class="variable">message</span>: <span class="string">"Happy Teacher’s Day"</span>,
+    
+    <span class="function">celebrate</span>() {
+        <span class="keyword">return</span> <span class="string">
+           🌟 You stayed strong, even when others were unkind🌻
+           🌟 You’ve worked hard and shown strength — that’s enough🌸
+           🌟 Wishing you confidence and happiness in every step ahead🌈
+           🌟 You proved that dedication shines brighter than anything else🍀
+        </span>;
+    }
+};
+
+<span class="comment">// Happy Teacher's Day! 🎉</span>
+<span class="function">console.log</span>(gratitude.<span class="function">celebrate</span>());</pre>
+            </div>
+        </div>
+        
+        <div class="tech-grid">
+            <div class="tech-card">
+                <div class="tech-icon">🐧</div>
+                <div class="tech-name">Linux </div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-icon">⚙️</div>
+                <div class="tech-name">Compiler Construction</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-icon">🌐</div>
+                <div class="tech-name">PHP Practical</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-icon">🎨</div>
+                <div class="tech-name">CG Practical</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-icon">⏳</div>
+                <div class="tech-name">Upcoming....😉</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-icon">💪</div>
+                <div class="tech-name">On the way....😎</div>
+            </div>
+        </div>
+        
+        <div class="message-section">
+            <div class="message-text">
+                <span class="highlight">Tanjeela Solanki :)</span><br>
+                Thank you for all your help throughout these years...💻✨
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Matrix rain effect
+        const canvas = document.querySelector('.matrix-rain');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+        const matrixArray = matrix.split("");
+        
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+        
+        const drops = [];
+        for(let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+        
+        function draw() {
+            ctx.fillStyle = 'rgba(15, 15, 35, 0.04)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00ff88';
+            ctx.font = fontSize + 'px JetBrains Mono';
+            
+            for(let i = 0; i < drops.length; i++) {
+                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(draw, 35);
+        
+        // Resize handler
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Add typing effect to code blocks
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.innerHTML = '';
+            function typing() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typing, speed);
+                }
+            }
+            typing();
+        }
+        
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'none';
+                    entry.target.offsetHeight; // Trigger reflow
+                    entry.target.style.animation = null;
+                }
+            });
+        });
+        
+        document.querySelectorAll('.code-block, .message-section, .tech-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
